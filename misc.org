@@ -1,0 +1,41 @@
+* Sun Feb 24 19:50:06 EST 2019
+** How should comparison work? I see three potential alternatives:
+*** Inductive mheap (s : TPSet) : Set := (* "totally preordered set *)
+*** Inductive mheap (T : Type) (order: T -> T -> bool) : Set :=
+*** Inductive mheap (T : Type) : Set :=
+** Reading through the definition of the `tree` object, I'm kind of
+   confused. The definition of it is 
+   Inductive tree : Type :=  Leaf : tree | Node : int -> tree -> X.t -> tree ->
+   tree
+*** Where, I have no idea what `X.t` even means. 
+*** Both the stdlib AVL trees and the stdlib RBTrees use a "ComparableType"
+    object. However, if we want to support the decrease-key operation, then I
+    don't really see how this can work. 
+*** I guess I won't use the stdlib OrderedType thing
+** I think we should follow the clrs implementation	
+*** If so, we will most likely need doubly linked lists. Otherwise, the merge
+    operation will be logarithmic, which is below the expected performance for a
+    fibheap
+*** Was not able to find an implementation of a doubly linked list
+*** Need to look into this
+**** Either try to figure out how to do linked lists (proper linked lists, with
+     pointers)
+**** Or, try to find another way to do it
+** Should we follow the MSets interface?	
+*** What is the MSets interface?
+** Should a min-heap be forced?
+** The Coq implementation of an RBTree uses the `tree` object, and essentially is
+   just a collection of wrappers around a `tree`. However, I don't see how we can
+   possibly use `tree`. 
+* Sun Mar 17 22:28:02 EDT 2019
+** Let's start with some sweeping simplifications. 
+*** Keys are integers
+*** Data objects are some mysterious type, called X
+*** Is there a way to define, for example, what functions are supposed to exist
+    for a mergeable heap? In other words, how does on create a spec for something?
+*** How do I capture the following idea? An mheap is a
+**** Leaf
+**** Node put on top of another mheap
+**** A collection of simple mheaps, where a simple mheap is constructed through
+     the first or second method
+**** Found here: [[file:fibheap.v::(*%20Alternative%20Mon%20Mar%2018%2000:13:09%20EDT%202019%20*)]]
