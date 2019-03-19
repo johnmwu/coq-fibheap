@@ -1,3 +1,11 @@
+To do
+* Decide on an implementation of mheaps. We *can* create branches for each of
+  them, but this is not ideal. 
+* Decide whether to bundle objects and keys into a single type (some record
+  type? I've never worked with these)
+* The union operation -- do I need a helper? 
+
+Log
 * Sun Feb 24 19:50:06 EST 2019
 ** How should comparison work? I see three potential alternatives:
 *** Inductive mheap (s : TPSet) : Set := (* "totally preordered set *)
@@ -31,6 +39,8 @@
 ** Let's start with some sweeping simplifications. 
 *** Keys are integers
 *** Data objects are some mysterious type, called X
+*** We do not bundle these together into a single object. Abstractions, based on
+    the mininal possible set of properties necessary to work, will come later.
 *** Is there a way to define, for example, what functions are supposed to exist
     for a mergeable heap? In other words, how does on create a spec for something?
 *** How do I capture the following idea? An mheap is a
@@ -39,3 +49,5 @@
 **** A collection of simple mheaps, where a simple mheap is constructed through
      the first or second method
 **** Found here: [[file:fibheap.v::(*%20Alternative%20Mon%20Mar%2018%2000:13:09%20EDT%202019%20*)]]
+* Mon Mar 18 23:39:47 EDT 2019
+** 
