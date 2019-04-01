@@ -1,40 +1,91 @@
+Require Import Orders. 
+
 (**** Aliases ****)
 (* For ease of changing later. *)
-Definition OT := nat. (* "Ordered Type" *)
-Definition lt := Nat.ltb. (* "Less than". Assumed to return bool *)
+Definition key_type := nat. (* Type of keys. Needs to be comparable *)
+Definition key_lt := Nat.ltb. (* "Less than" for keys. Assumed to return bool *)
+Definition val_type := nat. (* Type of values. Can be anything. Will generalize *)
+(* eventually *)
+
+
 Definition leaf_min := 0. (* The "min" returned when a leaf is put in. *)
 
+Module Type DLink (X: OrderedType).
+  (* "Doubly linked list". The collection type used in CLRS to make everything
+     work. Does not have to be implemented as a doubly linked list. *)
+  Parameter t : Type. (* The collection type *)
+  Parameter singleton : X.t -> t. (* Single element collection *)
+  Parameter merge : t -> t -> t.
+  Parameter min : t -> option X.t. 
+End DLink.
 
-
-
+Module Def (X: OrderedType) <: OrderedType.
+  Inductive fheap := 
+  | Leaf : fheap 
+  | Atop : X.t -> fheap -> fheap (* Put a node atop an existing fheap *)
+  | Ptr : dlink.t -> fheap. (* Create an fheap out of a collection of Atops. *)
+  
 
 (**************** Definition ****************)
 
-(* Define a mergeable heap data structure. Analogous to 'tree' in *)
-(* MSetGenTree. *) 
-Inductive mheap {X: Type} :=
-| Leaf : mheap
-| Node : OT -> X -> mheap -> mheap
-  (* Take any mheap and put a node on top *)
-| Cons : mheap -> mheap -> mheap.
-  (* Put two mheaps side by side. Used to create lists of mheaps, which end with *)
-  (* a Leaf. *)
+Module Ops (X: OrderedType) (dlink: DLink X).
+  
+  Inductive fheap := 
+  | Leaf : fheap 
+  | Atop : X.t -> fheap -> fheap (* Put a node atop an existing fheap *)
+  | Ptr : dlink.t -> fheap. (* Create an fheap out of a collection of Atops. *)
 
-(* Alternative Mon Mar 18 00:13:09 EDT 2019 *)
-(* "doubly linked list". As of Mon Mar 18 00:21:36 EDT 2019, unclear how to *)
-(* implement. Should, for example, support unions in constant time *)
-(* Definition doublell := list.  *)
+  (**************** Mergeable heap operations ****************)
+  (* As defined in CLRS, a mergeable heap has 5 fundamental operations:
+   * Make-heap()
+   * Insert(H, x)
+   * Minimum(H)
+   * Extract-min(H)
+   * Union(H1, H2)
+   In addition, their implementation of a fibonacci heap has two additional *)
+  (* operations:
+   * Decrease-key(H, x, k)
+   * Delete(H, x) *)
 
-(* Inductive mheap (X: Type) := *)
-(* | Leaf : mheap X *)
-(* | Node : nat -> X -> nheap X -> mheap X *)
-(* where nheap (X: Type) := doublell (mheap X).  *)
+  (* Comments: 
+   - Mon Mar 18 22:51:53 EDT 2019
+     - Ideally, there aren't so many "impossible" cases to worry about
+   *)
 
-(* Alternative Mon Mar 18 00:57:23 EDT 2019 *)
-(* Inductive mheap (X: Type) := *)
-(* | Leaf : mheap X *)
-(* | Node : nat -> X -> mheap X -> mheap X *)
-(* | Ptr : doublell (mheap X) -> mheap X.  *)
+  Fixpoint union (H1 H2: fheap) : fheap :=
+    match H1, H2 with
+    | Leaf, _ => H2
+    | _, Leaf => H1
+    | 
+    
+  
+
+Fixpoint union_helper {X: Type} (H1: mheap X) (H2: mheap X) :=
+  match H1, H2 with
+  | Leaf, _ => H2
+  | _, Leaf => H1
+  | Node _ _ _, _ =>
+    Cons H1 H2
+  | Cons H11 H12, _
+
+
+
+  | Node n1 _ _, Node n2 _ _ =>
+    if (lt n1 n2) then
+      Cons H1 (Cons H2 Leaf)
+    else
+      Cons H2 (Cons H1 Leaf)
+  | Node n1 _ _, Cons H21 H22 =>
+    match H21 with
+    | Leaf => union_assert_false H1 H2 (* should not happen *)
+    | Node n2 _ _ =>
+      if (lt n1 n2) then
+        Cons H1 H2
+      else
+        Cons H21 (union H1 H22)
+    | Cons _ _ => union_assert_false H1 H2
+    end
+  | Cons 
 
 
 (**************** Helpers ****************)
